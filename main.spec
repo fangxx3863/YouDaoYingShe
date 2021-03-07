@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['finally.py'],
+a = Analysis(['main.py'],
              pathex=['C:\\Users\\fang\\Desktop\\swb\\fin'],
              binaries=[('C:\\Windows\\System32\\libusb-1.0.dll', '.'),],
              datas=[],
@@ -23,7 +23,7 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='finally',
+          name='SWB',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,

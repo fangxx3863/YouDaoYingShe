@@ -11,7 +11,10 @@ import pynput
 import multiprocessing
 import time
 import os
+import configparser
 #import multiprocessing_win
+
+
 
 def keyboard_listener(q):
     print("Run KeyListener")
@@ -58,8 +61,8 @@ def mouse_move():
                 win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
                 zzz = 0
 
-            xx=((xa*256+xb)/2)-3000                #在这里修改映射大小及位移
-            yy=((ya*256+yb)/2)-3000                #在这里修改映射大小及位移
+            xx=((xa*256+xb)/XProportion)-XDisplacement               #在这里修改映射大小及位移
+            yy=((ya*256+yb)/YProportion)-YDisplacement               #在这里修改映射大小及位移
             xx=int(str(xx).split('.')[0] )
             yy=int(str(yy).split('.')[0] )
             #print(xx,"/",yy,"/",t)
@@ -82,8 +85,14 @@ def mouse_move():
 
 if __name__ == '__main__':
     multiprocessing.freeze_support()
-
     dir = os.getcwd() 
+    cfg = dir + "\\config.ini"
+    config = configparser.ConfigParser()
+    config.read(cfg,encoding='utf-8')
+    XProportion = float(config['DEFAULT']['XProportion'])
+    YProportion = float(config['DEFAULT']['YProportion'])
+    XDisplacement = float(config['DEFAULT']['XDisplacement'])
+    YDisplacement = float(config['DEFAULT']['YDisplacement'])
     dir = dir + "\\dev\\swbdev.exe"
     dir = "start" + " " + dir
     print(dir)

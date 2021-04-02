@@ -39,7 +39,6 @@ def mouse_move():
     # device is found :-)
     dev.set_configuration()
     zzz = 0
-    dot="."
     while True:
         while True:
             raw = dev.read(0x81,1000)
@@ -65,7 +64,7 @@ def mouse_move():
             yy=((ya*256+yb)/YProportion)-YDisplacement               #在这里修改映射大小及位移
             xx=int(str(xx).split('.')[0] )
             yy=int(str(yy).split('.')[0] )
-            #print(xx,"/",yy,"/",t)
+            print(xx,"/",yy,"/",t)
             win32api.SetCursorPos((xx,yy))   
             
             if q.value == 1:

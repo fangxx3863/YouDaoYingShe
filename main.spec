@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['main.py'],
-             pathex=['C:\\Users\\fang\\Desktop\\swb\\fin'],
+             pathex=['D:\\Data\\Documents\\GitHub\\YouDaoYingShe'],
              binaries=[('C:\\Windows\\System32\\libusb-1.0.dll', '.'),],
              datas=[],
              hiddenimports=['usb'],

@@ -4,8 +4,9 @@ import win32gui
 import win32api
 import win32con
 import sys
+import numpy as np
 #from pynput.keyboard import Key, Listener
-from multiprocessing import Process, Value
+from multiprocessing import Process, Value, Array
 #import pynput.keyboard
 #import pynput
 import multiprocessing
@@ -15,18 +16,20 @@ import configparser
 #import multiprocessing_win
 
 
-def pause_ctrl(pctr):
+def pause_ctrl(pctr, raww):
     print("Run pause_ctrl")
     dev = usb.core.find(idVendor=0x0483, idProduct=0x6003)
     if dev is None:
         raise ValueError('Device is not found')
     # device is found :-)
     dev.set_configuration()
-    zzz = 0
+    #zzz = 0
     js = 0
     while True:
-        raw = dev.read(0x81,1000)
+        raw = dev.read(0x81,64)
         ctrl = int(''.join([str(zz) for zz in raw[1:2]]))
+        raww[:] = list(np.array(raw).flatten())
+        #print(raww)
         if ctrl == 39:
             js = js + 1
         elif ctrl == 66:
@@ -39,11 +42,11 @@ def pause_ctrl(pctr):
 
 def mouse_move():
     print("Run MouseMove")
-    dev = usb.core.find(idVendor=0x0483, idProduct=0x6003)
-    if dev is None:
-        raise ValueError('Device is not found')
+    #dev = usb.core.find(idVendor=0x0483, idProduct=0x6003)
+    #if dev is None:
+    #    raise ValueError('Device is not found')
     # device is found :-)
-    dev.set_configuration()
+    #dev.set_configuration()
     zzz = 0
     while True:
         dir = os.getcwd() 
@@ -55,13 +58,15 @@ def mouse_move():
         XDisplacement = float(config['DEFAULT']['XDisplacement'])
         YDisplacement = float(config['DEFAULT']['YDisplacement'])
         while True:
-            raw = dev.read(0x81,1000)
+            #raw = dev.read(0x81,1000)
+            raw = raww[:]
             traw = (raw[13:14])
             yaraw = (raw[9:10])
             ybraw = (raw[8:9])
             xaraw = (raw[7:8])
             xbraw = (raw[6:7])
             #ctrl = int(''.join([str(zz) for zz in raw[1:2]]))
+            #print(raw)
             xa = float(''.join([str(zz) for zz in xaraw]))
             xb = float(''.join([str(zz) for zz in xbraw]))
             ya = float(''.join([str(zz) for zz in yaraw]))
@@ -82,6 +87,7 @@ def mouse_move():
             xx=int(xx)
             yy=int(yy)
             print(xx, "/", yy, "/", t, "/", pctr.value)
+            #print(raw)
             #print(raw)
             win32api.SetCursorPos((xx,yy))   
 
@@ -112,8 +118,9 @@ if __name__ == '__main__':
     time.sleep(4)
     os.system("wmic process where name='swbdev.exe'  delete")
 
-    pctr=Value("f",10.0)
-    cw = Process(target=pause_ctrl, args=(pctr,))
+    raww = Array("i", 64)
+    pctr = Value("i")
+    cw = Process(target=pause_ctrl, args=(pctr, raww))
     cw.start()
     mouse_move()
 

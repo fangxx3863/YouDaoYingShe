@@ -6,7 +6,7 @@
 #  ██║     ██║  ██║██║ ╚████║╚██████╔╝██╔╝ ██╗██╔╝ ██╗
 #  ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
 #       虽然代码写的稀烂，但是还是发出来记录一下吧！
-                                                   
+
 import usb.core
 import usb.util
 import win32api
@@ -163,15 +163,22 @@ if __name__ == '__main__':
     global window_size
     window_size = int(config['DEFAULT']['Smoothness'])
 
-    #打开官方程序初始化连接
-    dir = dir + "\\dev\\swbdev.exe"
-    dir = "start" + " " + dir
-    print(dir)
-    os.system(dir)
+    #判断USB是否已初始化
+    dev = usb.core.find(idVendor=0x0483, idProduct=0x6003)
+    read = dev.read(0x81,64)
+    read = list(np.array(read).flatten())
+    read = int(''.join([str(zz) for zz in (read[4:5])]))
+    print("If Not Open The Dev Please Run It Manual!")
+    if read is 0:
+        #打开官方程序初始化连接
+        dir = dir + "\\dev\\swbdev.exe"
+        dir = "start" + " " + dir
+        print(dir)
+        os.system(dir)
 
-    #杀死官方程序
-    time.sleep(4)
-    os.system("wmic process where name='swbdev.exe'  delete")
+        #杀死官方程序
+        time.sleep(4)
+        os.system("wmic process where name='swbdev.exe'  delete")
 
     #初始化进程间变量共享
     raww = Array("i", 64)
